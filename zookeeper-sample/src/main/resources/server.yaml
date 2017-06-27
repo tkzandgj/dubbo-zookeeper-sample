@@ -1,0 +1,22 @@
+clusters:
+  - id: 1
+    host: localhost
+    clientPort: 2180
+    leaderPort: 2880
+    messagePort: 3880
+    timeout: 5000
+  - id: 2
+    host: localhost
+    clientPort: 2181
+    leaderPort: 2881
+    messagePort: 3881
+    timeout: 5000
+  - id: 3
+    host: localhost
+    clientPort: 2182
+    leaderPort: 2882
+    messagePort: 3882
+    timeout: 5000
+rootPath: root
+dataPath: data
+childPath: server
