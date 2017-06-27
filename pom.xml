@@ -6,7 +6,69 @@
 
   <groupId>github.and777</groupId>
   <artifactId>dubbo-zookeeper-sample</artifactId>
+  <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
+  <modules>
+    <module>zookeeper-sample</module>
+  </modules>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.jdk.v>1.8</project.build.jdk.v>
+
+    <junit.v>RELEASE</junit.v>
+    <guava.v>RELEASE</guava.v>
+    <slf4j-log4j12.v>RELEASE</slf4j-log4j12.v>
+    <lombok.v>RELEASE</lombok.v>
+    <okhttp.v>3.8.0</okhttp.v>
+    <fastjson.v>1.2.33</fastjson.v>
+    <snakeyaml.v>1.18</snakeyaml.v>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava.v}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>okhttp</artifactId>
+      <version>${okhttp.v}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>fastjson</artifactId>
+      <version>${fastjson.v}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j-log4j12.v}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>${snakeyaml.v}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.v}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok.v}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 
 </project>
