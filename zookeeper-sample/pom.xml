@@ -12,7 +12,8 @@
   <artifactId>zookeeper-sample</artifactId>
 
   <properties>
-    <zookeeper.v>3.4.10</zookeeper.v>
+    <zookeeper.v>3.4.5</zookeeper.v>
+    <curator.v>2.12.0</curator.v>
   </properties>
 
   <dependencies>
@@ -20,6 +21,18 @@
       <groupId>org.apache.zookeeper</groupId>
       <artifactId>zookeeper</artifactId>
       <version>${zookeeper.v}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.curator</groupId>
+      <artifactId>curator-recipes</artifactId>
+      <version>${curator.v}</version>
     </dependency>
   </dependencies>
 
@@ -30,7 +43,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <source>${project.build.jdk.v}</source>
-          <target>1.8</target>
+          <target>${project.build.jdk.v}</target>
         </configuration>
       </plugin>
       <plugin>

@@ -1,7 +1,8 @@
-import github.and777.zookeeper.cluster.client.Client;
+import github.and777.commom.YAMLScanner;
+import github.and777.zookeeper.cluster.WatcherClient;
 import github.and777.zookeeper.cluster.systemconfig.ClusterConfig;
 import github.and777.zookeeper.cluster.systemconfig.SystemConfig;
-import github.and777.zookeeper.cluster.systemconfig.YAMLScanner;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
@@ -10,15 +11,17 @@ import org.junit.Test;
  * @author edliao on 2017/6/27.
  * @description TODO
  */
-public class Application {
+public class ZooKeeperTest {
 
   @Test
   public void connect() throws InterruptedException {
-    SystemConfig systemConfig = YAMLScanner.getSystemConfig();
+    URL url = ZooKeeperTest.class.getClassLoader().getResource("server.yaml");
+    SystemConfig systemConfig = SystemConfig.setInstance(YAMLScanner.getConfig(url, SystemConfig.class));
+
     List<ClusterConfig> clusterList = systemConfig.getClusters();
-    List<Client> clients = new ArrayList<>();
+    List<WatcherClient> clients = new ArrayList<>();
     for (ClusterConfig config : clusterList) {
-      clients.add(new Client(config));
+      clients.add(new WatcherClient(config));
     }
 
     Thread.sleep(1000 * 5);
@@ -33,8 +36,9 @@ public class Application {
 
   @Test
   public void sync() throws InterruptedException {
-    SystemConfig systemConfig = YAMLScanner.getSystemConfig();
-    Client client = new Client(systemConfig.getClusters().get(0));
+    URL url = ZooKeeperTest.class.getClassLoader().getResource("server.yaml");
+    SystemConfig systemConfig = SystemConfig.setInstance(YAMLScanner.getConfig(url, SystemConfig.class));
+    WatcherClient client = new WatcherClient(systemConfig.getClusters().get(0));
     Thread.sleep(1000 * 60 * 10);
   }
 

@@ -1,11 +1,13 @@
-package github.and777.zookeeper.cluster.client;
+package github.and777.zookeeper.cluster;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import github.and777.zookeeper.cluster.event.EventHandlerChain;
+import github.and777.commom.FormatTool;
 import github.and777.zookeeper.cluster.systemconfig.ClusterConfig;
-import github.and777.zookeeper.cluster.systemconfig.YAMLScanner;
+import github.and777.zookeeper.cluster.systemconfig.SystemConfig;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,13 +19,14 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.data.Stat;
 
 /**
  * @author edliao on 2017/6/27.
  * @description Client连接
  */
 @Slf4j
-public class Client implements Watcher {
+public class WatcherClient implements Watcher {
 
   private ZooKeeper server;
   private ClusterConfig config;
@@ -38,7 +41,7 @@ public class Client implements Watcher {
   /**
    * 连接ZooKeeper服务器
    */
-  public Client(ClusterConfig config) {
+  public WatcherClient(ClusterConfig config) {
     this.config = config;
     try {
       this.server = new ZooKeeper(config.getUrl(), config.getTimeout(), this);
@@ -93,9 +96,11 @@ public class Client implements Watcher {
   }
 
 
-  private static final String ROOT_PATH = "/" + YAMLScanner.getSystemConfig().getRootPath();
-  private static final String CHILD_PATH = "/" + YAMLScanner.getSystemConfig().getChildPath();
-  private static final String DATA_PATH = "/" + YAMLScanner.getSystemConfig().getDataPath();
+  private static final String ROOT_PATH = "/" + SystemConfig.getInstance().getRootPath();
+  private static final String CHILD_PATH =
+      ROOT_PATH + "/" + SystemConfig.getInstance().getChildPath();
+  private static final String DATA_PATH =
+      ROOT_PATH + "/" + SystemConfig.getInstance().getDataPath();
 
   /**
    * 初始化根节点
@@ -103,7 +108,7 @@ public class Client implements Watcher {
   private void initRoot() throws KeeperException, InterruptedException {
     log.info("检查Root节点");
 
-    if (!listenNode(ROOT_PATH)) {
+    if (!existsNode(ROOT_PATH)) {
       server
           .create(ROOT_PATH, null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
     }
@@ -121,11 +126,11 @@ public class Client implements Watcher {
    */
   private void initChild() throws KeeperException, InterruptedException {
     log.info("检查服务节点");
-    String childPath = ROOT_PATH + CHILD_PATH + config.getId();
+    String childPath = CHILD_PATH + config.getId();
     /**
      * 根据不同Zookeeper Cluster建立的节点主要是用来检测是否有Cluster掉线
      */
-    if (!listenNode(childPath)) {
+    if (!existsNode(childPath)) {
       server.create(childPath, null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
     }
   }
@@ -135,9 +140,9 @@ public class Client implements Watcher {
    */
   private void initData() throws KeeperException, InterruptedException {
     log.info("检查数据节点");
-    String dataPath = ROOT_PATH + DATA_PATH;
+    String dataPath = DATA_PATH;
 
-    if (!listenNode(dataPath)) {
+    if (!existsNode(dataPath)) {
       server.create(dataPath, null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
     }
 
@@ -151,14 +156,23 @@ public class Client implements Watcher {
   /**
    * 获取groupNode的情况
    */
-  private Boolean listenNode(String nodePath) {
-    Boolean exists = false;
+  private Optional<Stat> listenNode(String nodePath) {
+    Stat stat = null;
     try {
-      exists = server.exists(nodePath, true) != null;
+      stat = server.exists(nodePath, true);
     } catch (Exception e) {
       e.printStackTrace();
     }
-    log.info("节点{}{}存在", nodePath, exists ? "已" : "不");
+    return Optional.ofNullable(stat);
+  }
+
+  private Boolean existsNode(String nodePath) {
+    Boolean exists = listenNode(nodePath).isPresent();
+    if (exists) {
+      log.info("获取到节点{}\n{}", nodePath, formatStatInfo(listenNode(nodePath).get()));
+    } else {
+      log.info("节点{}不存在", nodePath);
+    }
     return exists;
   }
 
@@ -210,21 +224,33 @@ public class Client implements Watcher {
    * 对外接口 ,存取数据节点
    */
   public String getData(String key) {
-    String path = ROOT_PATH + DATA_PATH + "/" + key;
+    String path = DATA_PATH + "/" + key;
     return listenData(path).orElse(null);
   }
 
   public void setData(String key, String value) {
-    String path = ROOT_PATH + DATA_PATH + "/" + key;
+    String path = DATA_PATH + "/" + key;
     try {
-      if (!listenNode(path)) {
-        server.create(path, value.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+      Optional<Stat> stat = listenNode(path);
+      if (stat.isPresent()) {
+        server.setData(path, value.getBytes(), stat.get().getVersion());
       } else {
-        server.setData(path, value.getBytes(), -1);
+        server.create(path, value.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
       }
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
+  /**
+   * Test
+   */
+  public String formatStatInfo(Stat stat) {
+    Map<String, String> map = FormatTool.formatArray2Map(
+        new String[]{"czxid", "mzxid", "ctime", "mtime", "version", "cversion", "aversion",
+            "ephemeralOwner", "dataLength", "numChildren", "pzxid"},
+        stat.toString().trim().split(","));
+
+    return "\t"+Joiner.on(",\n\t").withKeyValueSeparator("=").join(map);
+  }
 }

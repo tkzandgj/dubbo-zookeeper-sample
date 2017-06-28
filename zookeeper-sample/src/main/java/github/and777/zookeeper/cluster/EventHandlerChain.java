@@ -1,4 +1,4 @@
-package github.and777.zookeeper.cluster.event;
+package github.and777.zookeeper.cluster;
 
 import java.util.ArrayList;
 import java.util.List;
