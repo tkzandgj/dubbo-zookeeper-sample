@@ -9,7 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>zookeeper-cluster-boot</artifactId>
+  <artifactId>copy-cluster</artifactId>
 
   <properties>
     <beetl.v>2.7.16</beetl.v>
