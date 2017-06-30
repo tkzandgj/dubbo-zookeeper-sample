@@ -50,7 +50,7 @@ public class CuratorTest {
   public void testTreeWatcher() throws InterruptedException {
     String ROOT_PATH = "/curator";
 
-    CuratorClient curatorClient = new CuratorClient("localhost:2181");
+    CuratorClient curatorClient = new CuratorClient("localhost:2185");
     CacheWatcherRegistry.registerTreeChche(curatorClient.getClient(), ROOT_PATH);
 
     Thread.sleep(1000 * 60 * 10);
@@ -93,11 +93,11 @@ public class CuratorTest {
 
   @Test
   public void testLeader() {
-    CuratorClient curatorClient = new CuratorClient("localhost:2180");
+    CuratorClient curatorClient = new CuratorClient("localhost:2181");
 
-    List<Thread> threads = Arrays.asList(getLeaderThread("localhost:2180"),
-        getLeaderThread("localhost:2181"),
-        getLeaderThread("localhost:2182"));
+    List<Thread> threads = Arrays.asList(getLeaderThread("localhost:2181"),
+        getLeaderThread("localhost:2182"),
+        getLeaderThread("localhost:2183"));
 
     threads.forEach(thread -> thread.start());
 

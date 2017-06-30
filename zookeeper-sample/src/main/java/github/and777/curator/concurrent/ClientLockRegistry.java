@@ -15,6 +15,13 @@ public class ClientLockRegistry {
 
   /**
    * 分布式锁
+   *
+   * 原理:
+   * 需要争抢锁的应用在lockpath下新建序列节点 ,如果应用中的序列 等于 序列最小的节点 ,则获得锁
+   * 其他应用订阅lockpath ,等待锁的释放(删除序列最小的节点)
+   *
+   * 优化 (from 阿里中间件) :当集群比较大的时候,订阅lockpath后每次锁的释放 ,大多数都是得不到锁的 1/n
+   * 判断最小节点(min)是否是该应用生成的民(x) ,是则获得锁 ; 不是则订阅比自己小(x-1)的节点 ,当(x-1)节点删除时 ,就轮到(x)应用获得锁了
    */
   public static void registerLock(CuratorClient client, String lockPath,
       Consumer<CuratorClient> consumer) {

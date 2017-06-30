@@ -107,11 +107,7 @@ public class CacheWatcherRegistry {
   private static TreeCacheListener DEFAULT_TREE_LISTENER = (client, event) ->
       Optional.ofNullable(event.getData()).
           ifPresent(childData ->
-              log.info("树节点变化: "
-                  + "type=[" + event.getType() + "]"
-                  + ", path=[" + childData.getPath() + "]"
-                  + ", data=[" + new String(childData.getData()) + "]"
-                  + ", stat=[" + childData.getStat() + "]")
+              log.info("树节点变化: type=[{}], node=[{}]",event.getType(), childData.toString())
           );
 
   /**
