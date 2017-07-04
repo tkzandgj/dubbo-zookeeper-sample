@@ -11,6 +11,10 @@
 
   <artifactId>zookeeper-sample</artifactId>
 
+  <modules>
+    <module>copy-cluster</module>
+  </modules>
+  
   <properties>
     <zookeeper.v>3.4.5</zookeeper.v>
     <curator.v>2.12.0</curator.v>
