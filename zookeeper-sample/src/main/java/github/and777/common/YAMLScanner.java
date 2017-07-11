@@ -1,4 +1,4 @@
-package github.and777.commom;
+package github.and777.common;
 
 import java.io.FileReader;
 import java.net.URL;

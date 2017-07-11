@@ -2,7 +2,7 @@ package github.and777.zookeeper.cluster;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import github.and777.commom.FormatTool;
+import github.and777.common.FormatTool;
 import github.and777.zookeeper.cluster.systemconfig.ClusterConfig;
 import github.and777.zookeeper.cluster.systemconfig.SystemConfig;
 import java.util.ArrayList;

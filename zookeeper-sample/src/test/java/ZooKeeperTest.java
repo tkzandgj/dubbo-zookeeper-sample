@@ -1,4 +1,4 @@
-import github.and777.commom.YAMLScanner;
+import github.and777.common.YAMLScanner;
 import github.and777.zookeeper.cluster.WatcherClient;
 import github.and777.zookeeper.cluster.systemconfig.ClusterConfig;
 import github.and777.zookeeper.cluster.systemconfig.SystemConfig;
