@@ -36,6 +36,7 @@ public class EchoServer {
           .localAddress(port) //指定端口
           //指定连接后调用的handler
           .childHandler(
+              //通过 ChannelInitializer 把 ChannelHandler链 安装到 pipeline
               new ChannelInitializer<Channel>() {
                 @Override
                 protected void initChannel(Channel channel) throws Exception {
@@ -43,7 +44,7 @@ public class EchoServer {
                 }
               }
           );
-      //绑定服务器 ,并阻塞等待sync 绑定完成
+      //绑定服务器 ,并等待绑定完成
       ChannelFuture f = b.bind().sync();
       System.out.println(EchoServer.class.getName() + "started and listen on " + f.channel().localAddress());
 
